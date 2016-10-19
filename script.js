@@ -103,6 +103,7 @@ var FT = {
 
 		e.target.parentElement.remove();
 		if(FT.following.length <= 0){
+			delete localStorage.following;
 			$("#info_header").html(`Search for streamers to see what they are doing. ${FT.kappa}`).css("display","block");
 		}
 	},
