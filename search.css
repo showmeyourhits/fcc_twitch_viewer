@@ -49,3 +49,8 @@
 .btn_add:hover{
 	background-color: #7555B1;
 }
+.btn_more{
+	font-weight: normal;
+	padding: 10px;
+	margin-top: 15px;
+}

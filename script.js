@@ -2,6 +2,10 @@ var FT = {
 	client_id:"qs0j10r4v207j0gsp4i96djauyzti18",
 	apiLink:"https://api.twitch.tv/kraken",
 	searchApi: "/search/channels",
+	value: "",
+	total:0,
+	offset:0,
+	moreButton: undefined,
 	streamsApi: "/streams",
 	channelsApi: "/channels",
 	kappa:"<img src=\"https://static-cdn.jtvnw.net/emoticons/v1/25/1.0\" alt=\"Kappa\">",
@@ -59,13 +63,15 @@ var FT = {
 	search: function(e){
 		if(e.which === 13){
 			console.log(`Searching for ${e.target.value}`);
+			FT.value = e.target.value;
 
 			$(".search_results").empty();
 			// animation Kappa
 			FT.loading($(".search_results"));
 			
 			$.getJSON(`${this.apiLink}${this.searchApi}?client_id=${this.client_id}&q=${e.target.value}`, function(data){
-				console.log("Successed request")
+				FT.total = data["_total"];
+				console.log(`Successed request: ${FT.total} like that`);
 				FT.showSearchResults(data["channels"]);
 			}).fail(function(){
 				console.log("Failed search request");
@@ -113,7 +119,11 @@ var FT = {
 
 		return cont;
 	},
-	showSearchResults: function(results){
+	makeMoreButton: function(){
+		let btn = $("<button>").addClass("btn_add btn_more").html("More");
+		return btn;
+	},
+	showSearchResults: function(results, end){
 		let searchContainer = $(".search_results");
 		searchContainer.empty();
 		if(this.loadingTimeout){
@@ -125,6 +135,27 @@ var FT = {
 			console.log(`${results.length} named like that`);
 			for(var i = 0; i < results.length; i++){
 				searchContainer.append(this.makeSearchElement(results[i]));
+			}
+			if(!end){
+				FT.moreButton = FT.moreButton || FT.makeMoreButton();
+				FT.moreButton.on("click", function(e){
+					FT.offset += results.length;
+					if(FT.offset <= FT.total){
+						$(".search_results").empty();
+						// animation Kappa
+						FT.loading($(".search_results"));
+
+						$.getJSON(`${FT.apiLink}${FT.searchApi}?client_id=${FT.client_id}&q=${FT.value}&offset=${FT.offset}`,
+						 function(data){
+							console.log(`Successed "more" request for ${FT.offset} offset`);
+							FT.showSearchResults(data["channels"], (FT.total - FT.offset) < 10);
+						}).fail(function(){
+							console.log("Failed search request");
+							FT.showSearchResults([]);
+						});
+					}
+				});
+				searchContainer.append(FT.moreButton);
 			}
 		}
 	},
