@@ -41,7 +41,7 @@ var FT = {
 	},
 	showChannelInfo:function(channel, online){
 		$("#info_header").html("Following streamers").css("display","none");
-		$(".streamers").append(FT.makeChannelElement(channel, online)).css("display","flex");
+		$(".streamers").append(FT.makeChannelElement(channel, online));
 	},
 	shorten: function(str, val){
 		if(str.length > val){
@@ -57,9 +57,9 @@ var FT = {
 		let name = $("<p>").addClass("streamer_name").html(`<a href="${channel.url}" target="_blank">${channel.display_name}</a>`);
 		let game = $("<p>").addClass("streamer_info");
 		if(online){
-			game.html(this.shorten(channel.game, 19));
+			game.text(channel.game);
 		}else{
-			game.html("Offline");
+			game.text("Offline");
 			cont.addClass("offline");
 		}
 		let btn = $("<button class=\"btn_remove\">x</button></section>").attr("data-streamername",channel.name).on("click", this.removeStreamer);
