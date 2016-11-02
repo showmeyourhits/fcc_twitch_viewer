@@ -3,15 +3,18 @@ var FT = {
 	apiLink:"https://api.twitch.tv/kraken",
 	searchApi: "/search/channels",
 	value: "",
-	total:0,
-	offset:0,
-	moreButton: undefined,
+	total:0, // total search matches
+	offset:0, // offset for search values
+	moreButton: undefined, // "singleton" for more Button
 	streamsApi: "/streams",
 	channelsApi: "/channels",
 	kappa:"<img src=\"https://static-cdn.jtvnw.net/emoticons/v1/25/1.0\" alt=\"Kappa\">",
 	defaultAvatar:"https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_300x300.png",
+	countLoaded: 0, // loaded counter for loadinng line
 	loadingTimeout:undefined,
 	loadStreams:function () {
+		$(".loading_line").addClass("loading_line_progress");
+
 		for(var name in FT.following){
 			if(name !== "length"){
 				this.loadChannelInfo(name);
@@ -27,7 +30,12 @@ var FT = {
 				$.getJSON(`${FT.apiLink}${FT.channelsApi}/${name}?client_id=${FT.client_id}`, function(channel){
 					FT.showChannelInfo(channel, false);	
 				});
-			}
+			};
+			FT.countLoaded += 1;
+			$(".loading_line").css("width", `${(FT.countLoaded/FT.following.length) * 100}%`);
+			if(FT.countLoaded === FT.following.length){
+				$(".loading_line").removeClass("loading_line_progress");
+			};
 		});
 
 	},

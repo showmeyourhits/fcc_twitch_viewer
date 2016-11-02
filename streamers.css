@@ -1,4 +1,12 @@
-
+.loading_line{
+	height: 2px;
+	background-color: inherit;
+	width: 0%;
+}
+.loading_line_progress{
+	background-color: #6441a4;
+	box-shadow: 0px 2px 10px white,0px -2px 10px white;
+}
 
 .streamers_container{
 	width: 70%;
